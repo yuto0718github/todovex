@@ -1,6 +1,7 @@
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import { ConvexAdapter } from "./app/ConvexAdapter"
+import { importPKCS8, SignJWT} from "jose"
  
 if (process.env.CONVEX_AUTH_PRIVATE_KEY === undefined) {
   throw new Error('Missing CONVEX_AUTH_PRIVATE_KEY')
@@ -26,7 +27,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: ConvexAdapter,
   callbacks: {
     async session({session}) {
-      const privateKey = await importPKCS8(process.env.CONVEX_AUTH.PRIVATE_KEY!, 'RS256');
+      const privateKey = await importPKCS8(process.env.CONVEX_AUTH_PRIVATE_KEY!, 'RS256');
 
           const convexToken = await new SignJWT({
             sub: session.userId
